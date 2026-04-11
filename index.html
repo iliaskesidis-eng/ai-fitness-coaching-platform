@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coach Console — AI Fitness Coaching Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="container row between">
+      <div>
+        <h1>Coach Console</h1>
+        <p class="tagline">Client management · Performance tracking · Automated audits</p>
+      </div>
+      <div class="header-actions">
+        <button id="btn-seed" class="btn ghost" title="Load a sample client for demo purposes">Load Sample</button>
+        <button id="btn-wipe" class="btn ghost danger" title="Clear all local data">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs container" role="tablist">
+    <button class="tab-btn active" data-tab="clients" role="tab">Clients</button>
+    <button class="tab-btn" data-tab="dashboard" role="tab">Dashboard</button>
+    <button class="tab-btn" data-tab="reports" role="tab">Reports</button>
+  </nav>
+
+  <main class="container">
+    <!-- CLIENTS TAB -->
+    <section id="tab-clients" class="tab-panel active">
+      <div class="split">
+        <aside class="card">
+          <div class="row between">
+            <h2>Roster</h2>
+            <button id="btn-new-client" class="btn primary small">+ New</button>
+          </div>
+          <ul id="client-list" class="client-list"></ul>
+        </aside>
+
+        <div class="card">
+          <h2 id="client-form-title">Client Profile</h2>
+          <p id="client-empty" class="muted">Select a client from the roster, or create a new one to begin.</p>
+
+          <form id="client-form" class="form-grid" hidden>
+            <input type="hidden" name="id" />
+            <label class="full">Full Name
+              <input name="name" required placeholder="Jane Doe" />
+            </label>
+            <label>Age
+              <input name="age" type="number" min="10" max="100" required />
+            </label>
+            <label>Gender
+              <select name="gender">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label>Height (cm)
+              <input name="heightCm" type="number" step="0.1" />
+            </label>
+            <label>Weight (kg)
+              <input name="weightKg" type="number" step="0.1" />
+            </label>
+            <label>Body Fat (%)
+              <input name="bodyFatPct" type="number" step="0.1" />
+            </label>
+            <label>Resting HR (bpm)
+              <input name="restingHR" type="number" />
+            </label>
+            <label class="full">Goals
+              <textarea name="goals" rows="2" placeholder="e.g. Gain 5kg lean mass; improve squat 1RM to 140kg"></textarea>
+            </label>
+            <label class="full">Injuries / Limitations
+              <textarea name="injuries" rows="2" placeholder="e.g. Prior right ACL reconstruction; lower-back sensitivity"></textarea>
+            </label>
+            <div class="form-actions full">
+              <button type="submit" class="btn primary">Save Profile</button>
+              <button type="button" id="btn-cancel-client" class="btn ghost">Cancel</button>
+              <button type="button" id="btn-delete-client" class="btn danger">Delete</button>
+            </div>
+          </form>
+
+          <div id="metrics-section" hidden>
+            <hr />
+            <h3>Log Performance Entry</h3>
+            <form id="metric-form" class="form-grid">
+              <label>Date
+                <input name="date" type="date" required />
+              </label>
+              <label>Squat 1RM (kg)
+                <input name="squat" type="number" step="0.5" />
+              </label>
+              <label>Bench 1RM (kg)
+                <input name="bench" type="number" step="0.5" />
+              </label>
+              <label>Deadlift 1RM (kg)
+                <input name="deadlift" type="number" step="0.5" />
+              </label>
+              <label>VO₂ max (mL/kg/min)
+                <input name="vo2max" type="number" step="0.1" />
+              </label>
+              <label>Mile Time (min)
+                <input name="mileTime" type="number" step="0.01" />
+              </label>
+              <label>Weight (kg)
+                <input name="mWeight" type="number" step="0.1" />
+              </label>
+              <label>Body Fat (%)
+                <input name="mBf" type="number" step="0.1" />
+              </label>
+              <div class="form-actions full">
+                <button type="submit" class="btn primary">Add Entry</button>
+              </div>
+            </form>
+
+            <h3>History</h3>
+            <div id="metric-history" class="history-table"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD TAB -->
+    <section id="tab-dashboard" class="tab-panel">
+      <div class="card">
+        <div class="row between">
+          <h2>Performance Dashboard</h2>
+          <select id="dash-client" class="select"></select>
+        </div>
+        <div id="dash-content">
+          <p class="muted">Select a client to view trends.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS TAB -->
+    <section id="tab-reports" class="tab-panel">
+      <div class="card">
+        <div class="row between">
+          <h2>Audit Report</h2>
+          <div class="row gap">
+            <select id="report-client" class="select"></select>
+            <button id="btn-generate" class="btn primary">Generate</button>
+            <button id="btn-pdf" class="btn">Export PDF</button>
+          </div>
+        </div>
+        <div id="report-output">
+          <p class="muted">Generate an audit to view strengths, weaknesses, and programming recommendations.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer container">
+    <p>Data is stored locally in your browser. Nothing leaves this device.</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
