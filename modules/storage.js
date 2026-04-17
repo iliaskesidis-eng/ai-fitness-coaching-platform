@@ -1,6 +1,13 @@
+/**
+ * storage.js
+ * Thin localStorage wrapper. All persistence goes through here so the
+ * backend can be swapped without touching anything else.
+ */
+
 const Storage = {
   PREFIX: 'pis_',
 
+  // Save any value under a namespaced key
   save(key, data) {
     try {
       localStorage.setItem(this.PREFIX + key, JSON.stringify(data));
@@ -11,12 +18,12 @@ const Storage = {
     }
   },
 
+  // Load a value (returns null if absent or parse fails)
   load(key) {
     try {
       const raw = localStorage.getItem(this.PREFIX + key);
       return raw ? JSON.parse(raw) : null;
     } catch (e) {
-      console.error('Storage.load failed:', e);
       return null;
     }
   },
@@ -25,45 +32,28 @@ const Storage = {
     localStorage.removeItem(this.PREFIX + key);
   },
 
+  // --- Client-specific helpers ---
+
   saveClient(client) {
-    const id = client.id || this.generateId();
-    client.id = id;
-    client.updatedAt = new Date().toISOString();
-    if (!client.createdAt) client.createdAt = client.updatedAt;
-
-    const clients = this.listClients();
-    const idx     = clients.findIndex(c => c.id === id);
-    const summary = { id, name: client.profile.fullName || 'Unnamed', updatedAt: client.updatedAt };
-
-    if (idx >= 0) clients[idx] = summary;
-    else          clients.push(summary);
-
-    this.save('clients', clients);
-    this.save('client_' + id, client);
-    return id;
+    // TODO: assign id, update timestamps, maintain index
+    return client.id;
   },
 
   loadClient(id) {
-    return this.load('client_' + id);
+    // TODO: load from pis_client_<id>
+    return null;
   },
 
   listClients() {
-    return this.load('clients') || [];
+    // TODO: load client index array
+    return [];
   },
 
   deleteClient(id) {
-    const clients = this.listClients().filter(c => c.id !== id);
-    this.save('clients', clients);
-    this.remove('client_' + id);
-  },
-
-  generateId() {
-    return 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    // TODO: remove from index and delete record
   },
 
   clearAll() {
-    Object.keys(localStorage)
-      .filter(k => k.startsWith(this.PREFIX))
-      .forEach(k => localStorage.removeItem(k));
+    // TODO: remove all pis_ keys
   }
 };

@@ -8,12 +8,9 @@
 </head>
 <body>
 
-  <!-- ================================================================
-       App Shell
-  ================================================================ -->
   <div class="app-shell">
 
-    <!-- Header -->
+    <!-- ========== Header ========== -->
     <header class="app-header">
       <div class="header-brand">
         <div class="brand-mark">PIS</div>
@@ -34,7 +31,7 @@
       </div>
     </header>
 
-    <!-- Tab Navigation -->
+    <!-- ========== Tab Nav ========== -->
     <nav class="tab-nav" role="tablist">
       <button class="tab-btn active" data-tab="profile"     role="tab">Client Profile</button>
       <button class="tab-btn"        data-tab="metrics"     role="tab">Performance Metrics</button>
@@ -43,24 +40,22 @@
       <button class="tab-btn"        data-tab="report"      role="tab">Report</button>
     </nav>
 
-    <!-- Main -->
+    <!-- ========== Main ========== -->
     <main class="app-main">
 
-      <!-- ============================================================
-           TAB 1 — Client Profile
-      ============================================================ -->
+      <!-- ── Tab 1: Client Profile ── -->
       <section id="tab-profile" class="tab-panel active">
         <div class="panel-header">
           <h2>Client Profile</h2>
-          <p>Fields marked <span class="req-mark">*</span> are required for pathway classification.</p>
+          <p>Fields marked <span class="req">*</span> are required for pathway classification.</p>
         </div>
 
         <div class="form-grid">
 
           <div class="fg-row">
             <div class="fg-group">
-              <label for="fullName">Full Name <span class="req-mark">*</span></label>
-              <input type="text" id="fullName" placeholder="e.g. James Morrison" autocomplete="off" />
+              <label for="fullName">Full Name <span class="req">*</span></label>
+              <input type="text" id="fullName" placeholder="e.g. James Morrison" />
             </div>
             <div class="fg-group">
               <label for="age">Age</label>
@@ -83,7 +78,7 @@
               <input type="number" id="height" placeholder="e.g. 178" />
             </div>
             <div class="fg-group">
-              <label for="weight">Body Weight (kg) <span class="req-mark">*</span></label>
+              <label for="weight">Body Weight (kg) <span class="req">*</span></label>
               <input type="number" id="weight" placeholder="e.g. 82" />
             </div>
             <div class="fg-group">
@@ -103,13 +98,13 @@
             </div>
             <div class="fg-group">
               <label for="occupation">Occupation / Sport</label>
-              <input type="text" id="occupation" placeholder="e.g. Construction worker" autocomplete="off" />
+              <input type="text" id="occupation" placeholder="e.g. Construction worker" />
             </div>
           </div>
 
           <div class="fg-row">
             <div class="fg-group fg-full">
-              <label for="clientType">Client Type <span class="req-mark">*</span></label>
+              <label for="clientType">Client Type <span class="req">*</span></label>
               <select id="clientType">
                 <option value="">Select client type&hellip;</option>
                 <optgroup label="General Population">
@@ -131,24 +126,24 @@
 
           <div class="fg-row">
             <div class="fg-group fg-full">
-              <label for="goals">Goals <span class="req-mark">*</span></label>
-              <textarea id="goals" rows="3" placeholder="e.g. Return to competitive football after ACL reconstruction. Goal is full match participation within 6 months. Secondary goal: improve relative strength to 1.5&times; BW squat."></textarea>
+              <label for="goals">Goals <span class="req">*</span></label>
+              <textarea id="goals" rows="3"
+                placeholder="e.g. Return to competitive football post ACL. Target full match participation in 6 months."></textarea>
             </div>
           </div>
 
           <div class="fg-row">
             <div class="fg-group fg-full">
               <label for="injuryHistory">Injury History / Current Limitations</label>
-              <textarea id="injuryHistory" rows="4" placeholder="e.g. Left ACL reconstruction 8 months ago (hamstring graft). Previous right shoulder labral repair 2020 — conservative. Chronic lumbar tightness, managed. Current: full weight-bearing, cleared for gym training."></textarea>
+              <textarea id="injuryHistory" rows="4"
+                placeholder="e.g. Left ACL reconstruction 8 months ago (hamstring graft). Cleared for gym training."></textarea>
             </div>
           </div>
 
-        </div><!-- /form-grid -->
+        </div>
       </section>
 
-      <!-- ============================================================
-           TAB 2 — Performance Metrics
-      ============================================================ -->
+      <!-- ── Tab 2: Performance Metrics ── -->
       <section id="tab-metrics" class="tab-panel">
         <div class="panel-header">
           <h2>Performance Metrics</h2>
@@ -156,7 +151,7 @@
         </div>
 
         <div class="metrics-block">
-          <h3 class="metrics-subtitle">Strength &mdash; 1RM Testing</h3>
+          <h3 class="metrics-sub">Strength &mdash; 1RM Testing</h3>
           <div class="fg-row">
             <div class="fg-group">
               <label for="squat1RM">Back Squat 1RM (kg)</label>
@@ -177,7 +172,7 @@
         </div>
 
         <div class="metrics-block">
-          <h3 class="metrics-subtitle">Conditioning</h3>
+          <h3 class="metrics-sub">Conditioning</h3>
           <div class="fg-row">
             <div class="fg-group">
               <label for="vo2max">VO2 Max (ml/kg/min)</label>
@@ -192,63 +187,64 @@
         </div>
       </section>
 
-      <!-- ============================================================
-           TAB 3 — Movement Quality
-      ============================================================ -->
+      <!-- ── Tab 3: Movement Quality ── -->
       <section id="tab-movement" class="tab-panel">
         <div class="panel-header">
           <h2>Movement &amp; Physical Qualities</h2>
-          <p>Document observed or reported movement characteristics. Specific entries produce better report output than vague ones.</p>
+          <p>Specific entries produce better classification and report output than vague ones.</p>
         </div>
 
         <div class="form-grid">
           <div class="fg-row">
             <div class="fg-group fg-full">
               <label for="mobilityRestrictions">Mobility Restrictions</label>
-              <textarea id="mobilityRestrictions" rows="3" placeholder="e.g. Limited left hip internal rotation (~15&deg; vs 30&deg; R), reduced ankle dorsiflexion bilaterally (&lt;10&deg; weight-bearing), restricted thoracic rotation."></textarea>
+              <textarea id="mobilityRestrictions" rows="3"
+                placeholder="e.g. Limited left hip internal rotation, reduced ankle dorsiflexion bilaterally."></textarea>
             </div>
           </div>
           <div class="fg-row">
             <div class="fg-group fg-full">
               <label for="stabilityDeficits">Stability Deficits</label>
-              <textarea id="stabilityDeficits" rows="3" placeholder="e.g. Poor single-leg stance on left (&lt;5 s vs 20 s R), lumbar flexion instability under load, shoulder blade winging on push-up."></textarea>
+              <textarea id="stabilityDeficits" rows="3"
+                placeholder="e.g. Poor single-leg stance on left (&lt;5 s), shoulder blade winging on push-up."></textarea>
             </div>
           </div>
           <div class="fg-row">
             <div class="fg-group fg-full">
               <label for="coordinationLiteracy">Coordination / Movement Literacy</label>
-              <textarea id="coordinationLiteracy" rows="3" placeholder="e.g. Difficulty dissociating hip hinge from lumbar flexion, limited kinesthetic awareness under fatigue, squat pattern shows knee valgus at 90&deg; with any load."></textarea>
+              <textarea id="coordinationLiteracy" rows="3"
+                placeholder="e.g. Difficulty dissociating hip hinge from lumbar flexion under load."></textarea>
             </div>
           </div>
           <div class="fg-row">
             <div class="fg-group fg-full">
               <label for="painWithMovement">Pain with Movement</label>
-              <textarea id="painWithMovement" rows="2" placeholder="e.g. Anterior knee pain with loading in &gt;90&deg; flexion — NRS 4/10 at end range, 0 at rest. OR: None currently."></textarea>
+              <textarea id="painWithMovement" rows="2"
+                placeholder="e.g. Anterior knee pain &gt;90° flexion — NRS 4/10. OR: None currently."></textarea>
             </div>
           </div>
           <div class="fg-row">
             <div class="fg-group fg-full">
               <label for="balanceNotes">Balance / Proprioception Notes</label>
-              <textarea id="balanceNotes" rows="2" placeholder="e.g. Single-leg balance: R 18 s, L 6 s. Reduced proprioceptive confidence on left following ankle sprain. Postural sway noted under perturbation."></textarea>
+              <textarea id="balanceNotes" rows="2"
+                placeholder="e.g. Single-leg balance: R 18 s, L 6 s. Reduced confidence on left post ankle sprain."></textarea>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ============================================================
-           TAB 4 — Diagnostics
-      ============================================================ -->
+      <!-- ── Tab 4: Diagnostics ── -->
       <section id="tab-diagnostics" class="tab-panel">
         <div class="panel-header">
           <h2>Advanced Diagnostics</h2>
-          <p>All fields optional. The system will process available data and flag absent assessments where relevant to the pathway.</p>
+          <p>All fields optional. The system will flag absent assessments where relevant to the pathway.</p>
         </div>
 
         <div class="diag-grid">
 
           <!-- ForceDecks -->
           <div class="diag-card">
-            <div class="diag-card-header">
+            <div class="diag-card-hd">
               <div class="diag-badge fd">FD</div>
               <div>
                 <div class="diag-card-title">ForceDecks</div>
@@ -264,12 +260,12 @@
                 <label for="peakPower">Peak Power (W)</label>
                 <input type="number" id="peakPower" placeholder="e.g. 4250" />
               </div>
-            </div>
-            <div class="fg-row compact">
               <div class="fg-group">
                 <label for="fdAsymmetry">Asymmetry %</label>
                 <input type="number" id="fdAsymmetry" step="0.1" placeholder="e.g. 8.4" />
               </div>
+            </div>
+            <div class="fg-row compact">
               <div class="fg-group">
                 <label for="brakingRFD">Braking RFD (N/s)</label>
                 <input type="number" id="brakingRFD" placeholder="e.g. 7200" />
@@ -283,7 +279,7 @@
 
           <!-- NordBord -->
           <div class="diag-card">
-            <div class="diag-card-header">
+            <div class="diag-card-hd">
               <div class="diag-badge nb">NB</div>
               <div>
                 <div class="diag-card-title">NordBord</div>
@@ -308,7 +304,7 @@
 
           <!-- ForceFrame -->
           <div class="diag-card">
-            <div class="diag-card-header">
+            <div class="diag-card-hd">
               <div class="diag-badge ff">FF</div>
               <div>
                 <div class="diag-card-title">ForceFrame</div>
@@ -343,7 +339,7 @@
 
           <!-- SmartSpeed -->
           <div class="diag-card">
-            <div class="diag-card-header">
+            <div class="diag-card-hd">
               <div class="diag-badge ss">SS</div>
               <div>
                 <div class="diag-card-title">SmartSpeed</div>
@@ -368,7 +364,7 @@
 
           <!-- DynaMo -->
           <div class="diag-card">
-            <div class="diag-card-header">
+            <div class="diag-card-hd">
               <div class="diag-badge dm">DM</div>
               <div>
                 <div class="diag-card-title">DynaMo</div>
@@ -378,20 +374,22 @@
             <div class="fg-row compact">
               <div class="fg-group fg-full">
                 <label for="dynaROM">ROM Notes</label>
-                <textarea id="dynaROM" rows="2" placeholder="e.g. Hip flexion L 118&deg; R 122&deg;, ankle dorsiflexion L 28&deg; R 34&deg;&hellip;"></textarea>
+                <textarea id="dynaROM" rows="2"
+                  placeholder="e.g. Hip flexion L 118° R 122°, ankle dorsiflexion L 28° R 34°."></textarea>
               </div>
             </div>
             <div class="fg-row compact">
               <div class="fg-group fg-full">
                 <label for="dynaStrength">Isolated Strength Notes</label>
-                <textarea id="dynaStrength" rows="2" placeholder="e.g. Hip flexor: L 88 N R 94 N; knee ext: L 210 N R 198 N&hellip;"></textarea>
+                <textarea id="dynaStrength" rows="2"
+                  placeholder="e.g. Hip flexor L 88 N R 94 N; knee ext L 210 N R 198 N."></textarea>
               </div>
             </div>
           </div>
 
           <!-- VBT / GymAware -->
           <div class="diag-card">
-            <div class="diag-card-header">
+            <div class="diag-card-hd">
               <div class="diag-badge vb">VB</div>
               <div>
                 <div class="diag-card-title">GymAware / VBT</div>
@@ -411,7 +409,8 @@
             <div class="fg-row compact">
               <div class="fg-group fg-full">
                 <label for="vbtFVNotes">Force-Velocity Profile Notes</label>
-                <textarea id="vbtFVNotes" rows="2" placeholder="e.g. F-V profile shifted toward force — insufficient velocity expression at light loads. Speed-strength work recommended."></textarea>
+                <textarea id="vbtFVNotes" rows="2"
+                  placeholder="e.g. F-V profile shifted toward force — speed-strength work recommended."></textarea>
               </div>
             </div>
           </div>
@@ -419,9 +418,7 @@
         </div><!-- /diag-grid -->
       </section>
 
-      <!-- ============================================================
-           TAB 5 — Report
-      ============================================================ -->
+      <!-- ── Tab 5: Report ── -->
       <section id="tab-report" class="tab-panel">
         <div class="report-toolbar">
           <button id="btn-export-pdf" class="btn btn-primary">Export PDF</button>
@@ -431,30 +428,27 @@
         </div>
       </section>
 
-    </main><!-- /app-main -->
-  </div><!-- /app-shell -->
+    </main>
+  </div>
 
-  <!-- ================================================================
-       Load Client Modal
-  ================================================================ -->
-  <div id="load-modal" class="modal" role="dialog" aria-modal="true" aria-label="Load client">
+  <!-- ========== Load Modal ========== -->
+  <div id="load-modal" class="modal" role="dialog" aria-modal="true">
     <div class="modal-box">
-      <div class="modal-head">
+      <div class="modal-hd">
         <h3>Load Client</h3>
-        <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
+        <button id="modal-close" class="modal-close">&times;</button>
       </div>
-      <div id="client-list-modal" class="modal-client-list">
+      <div id="client-list-modal" class="modal-body">
         <!-- Populated by App.openLoadModal() -->
       </div>
     </div>
   </div>
 
-  <!-- Toast notification -->
+  <!-- ========== Toast ========== -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- ================================================================
-       Scripts — order matters: dependencies before consumers
-  ================================================================ -->
+  <!-- ========== Scripts ========== -->
+  <!-- Order matters: dependencies before consumers -->
   <script src="modules/storage.js"></script>
   <script src="modules/client.js"></script>
   <script src="modules/classification.js"></script>
