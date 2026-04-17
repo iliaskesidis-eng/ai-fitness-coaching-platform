@@ -3,160 +3,465 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coach Console — AI Fitness Coaching Platform</title>
+  <title>Performance Intelligence System</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="app-header">
-    <div class="container row between">
-      <div>
-        <h1>Coach Console</h1>
-        <p class="tagline">Client management · Performance tracking · Automated audits</p>
+
+  <!-- ================================================================
+       App Shell
+  ================================================================ -->
+  <div class="app-shell">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-mark">PIS</div>
+        <div class="brand-text">
+          <span class="brand-title">Performance Intelligence System</span>
+          <span class="brand-sub">Assessment &middot; Classification &middot; Coaching Decision Engine</span>
+        </div>
+      </div>
+      <div class="header-client">
+        <span class="hc-label">Client:</span>
+        <span id="current-client-name" class="hc-name">New Client</span>
       </div>
       <div class="header-actions">
-        <button id="btn-seed" class="btn ghost" title="Load a sample client for demo purposes">Load Sample</button>
-        <button id="btn-wipe" class="btn ghost danger" title="Clear all local data">Reset</button>
+        <button id="btn-new"      class="btn btn-ghost">New</button>
+        <button id="btn-load"     class="btn btn-ghost">Load</button>
+        <button id="btn-save"     class="btn btn-sec">Save</button>
+        <button id="btn-generate" class="btn btn-primary">Generate Report</button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <nav class="tabs container" role="tablist">
-    <button class="tab-btn active" data-tab="clients" role="tab">Clients</button>
-    <button class="tab-btn" data-tab="dashboard" role="tab">Dashboard</button>
-    <button class="tab-btn" data-tab="reports" role="tab">Reports</button>
-  </nav>
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="profile"     role="tab">Client Profile</button>
+      <button class="tab-btn"        data-tab="metrics"     role="tab">Performance Metrics</button>
+      <button class="tab-btn"        data-tab="movement"    role="tab">Movement Quality</button>
+      <button class="tab-btn"        data-tab="diagnostics" role="tab">Diagnostics</button>
+      <button class="tab-btn"        data-tab="report"      role="tab">Report</button>
+    </nav>
 
-  <main class="container">
-    <!-- CLIENTS TAB -->
-    <section id="tab-clients" class="tab-panel active">
-      <div class="split">
-        <aside class="card">
-          <div class="row between">
-            <h2>Roster</h2>
-            <button id="btn-new-client" class="btn primary small">+ New</button>
-          </div>
-          <ul id="client-list" class="client-list"></ul>
-        </aside>
+    <!-- Main -->
+    <main class="app-main">
 
-        <div class="card">
-          <h2 id="client-form-title">Client Profile</h2>
-          <p id="client-empty" class="muted">Select a client from the roster, or create a new one to begin.</p>
+      <!-- ============================================================
+           TAB 1 — Client Profile
+      ============================================================ -->
+      <section id="tab-profile" class="tab-panel active">
+        <div class="panel-header">
+          <h2>Client Profile</h2>
+          <p>Fields marked <span class="req-mark">*</span> are required for pathway classification.</p>
+        </div>
 
-          <form id="client-form" class="form-grid" hidden>
-            <input type="hidden" name="id" />
-            <label class="full">Full Name
-              <input name="name" required placeholder="Jane Doe" />
-            </label>
-            <label>Age
-              <input name="age" type="number" min="10" max="100" required />
-            </label>
-            <label>Gender
-              <select name="gender">
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </label>
-            <label>Height (cm)
-              <input name="heightCm" type="number" step="0.1" />
-            </label>
-            <label>Weight (kg)
-              <input name="weightKg" type="number" step="0.1" />
-            </label>
-            <label>Body Fat (%)
-              <input name="bodyFatPct" type="number" step="0.1" />
-            </label>
-            <label>Resting HR (bpm)
-              <input name="restingHR" type="number" />
-            </label>
-            <label class="full">Goals
-              <textarea name="goals" rows="2" placeholder="e.g. Gain 5kg lean mass; improve squat 1RM to 140kg"></textarea>
-            </label>
-            <label class="full">Injuries / Limitations
-              <textarea name="injuries" rows="2" placeholder="e.g. Prior right ACL reconstruction; lower-back sensitivity"></textarea>
-            </label>
-            <div class="form-actions full">
-              <button type="submit" class="btn primary">Save Profile</button>
-              <button type="button" id="btn-cancel-client" class="btn ghost">Cancel</button>
-              <button type="button" id="btn-delete-client" class="btn danger">Delete</button>
+        <div class="form-grid">
+
+          <div class="fg-row">
+            <div class="fg-group">
+              <label for="fullName">Full Name <span class="req-mark">*</span></label>
+              <input type="text" id="fullName" placeholder="e.g. James Morrison" autocomplete="off" />
             </div>
-          </form>
+            <div class="fg-group">
+              <label for="age">Age</label>
+              <input type="number" id="age" min="10" max="100" placeholder="e.g. 28" />
+            </div>
+            <div class="fg-group">
+              <label for="sex">Sex</label>
+              <select id="sex">
+                <option value="">Select&hellip;</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other / Prefer not to say</option>
+              </select>
+            </div>
+          </div>
 
-          <div id="metrics-section" hidden>
-            <hr />
-            <h3>Log Performance Entry</h3>
-            <form id="metric-form" class="form-grid">
-              <label>Date
-                <input name="date" type="date" required />
-              </label>
-              <label>Squat 1RM (kg)
-                <input name="squat" type="number" step="0.5" />
-              </label>
-              <label>Bench 1RM (kg)
-                <input name="bench" type="number" step="0.5" />
-              </label>
-              <label>Deadlift 1RM (kg)
-                <input name="deadlift" type="number" step="0.5" />
-              </label>
-              <label>VO₂ max (mL/kg/min)
-                <input name="vo2max" type="number" step="0.1" />
-              </label>
-              <label>Mile Time (min)
-                <input name="mileTime" type="number" step="0.01" />
-              </label>
-              <label>Weight (kg)
-                <input name="mWeight" type="number" step="0.1" />
-              </label>
-              <label>Body Fat (%)
-                <input name="mBf" type="number" step="0.1" />
-              </label>
-              <div class="form-actions full">
-                <button type="submit" class="btn primary">Add Entry</button>
+          <div class="fg-row">
+            <div class="fg-group">
+              <label for="height">Height (cm)</label>
+              <input type="number" id="height" placeholder="e.g. 178" />
+            </div>
+            <div class="fg-group">
+              <label for="weight">Body Weight (kg) <span class="req-mark">*</span></label>
+              <input type="number" id="weight" placeholder="e.g. 82" />
+            </div>
+            <div class="fg-group">
+              <label for="bodyFat">Body Fat %</label>
+              <input type="number" id="bodyFat" step="0.1" placeholder="e.g. 22" />
+            </div>
+          </div>
+
+          <div class="fg-row">
+            <div class="fg-group">
+              <label for="restingHR">Resting HR (bpm)</label>
+              <input type="number" id="restingHR" placeholder="e.g. 62" />
+            </div>
+            <div class="fg-group">
+              <label for="trainingAge">Training Age (years)</label>
+              <input type="number" id="trainingAge" step="0.5" placeholder="e.g. 3" />
+            </div>
+            <div class="fg-group">
+              <label for="occupation">Occupation / Sport</label>
+              <input type="text" id="occupation" placeholder="e.g. Construction worker" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="clientType">Client Type <span class="req-mark">*</span></label>
+              <select id="clientType">
+                <option value="">Select client type&hellip;</option>
+                <optgroup label="General Population">
+                  <option value="general_population">General Population Adult</option>
+                  <option value="youth">Youth / First-Time Gym User</option>
+                </optgroup>
+                <optgroup label="Rehabilitation &amp; Work">
+                  <option value="rehabilitation">Rehabilitation Client</option>
+                  <option value="occupational">Occupational / Return-to-Work</option>
+                </optgroup>
+                <optgroup label="Athlete Pathways">
+                  <option value="athlete_participation">Athlete &mdash; Return to Participation</option>
+                  <option value="athlete_sport">Athlete &mdash; Return to Sport</option>
+                  <option value="athlete_performance">Athlete &mdash; Return to Performance</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="goals">Goals <span class="req-mark">*</span></label>
+              <textarea id="goals" rows="3" placeholder="e.g. Return to competitive football after ACL reconstruction. Goal is full match participation within 6 months. Secondary goal: improve relative strength to 1.5&times; BW squat."></textarea>
+            </div>
+          </div>
+
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="injuryHistory">Injury History / Current Limitations</label>
+              <textarea id="injuryHistory" rows="4" placeholder="e.g. Left ACL reconstruction 8 months ago (hamstring graft). Previous right shoulder labral repair 2020 — conservative. Chronic lumbar tightness, managed. Current: full weight-bearing, cleared for gym training."></textarea>
+            </div>
+          </div>
+
+        </div><!-- /form-grid -->
+      </section>
+
+      <!-- ============================================================
+           TAB 2 — Performance Metrics
+      ============================================================ -->
+      <section id="tab-metrics" class="tab-panel">
+        <div class="panel-header">
+          <h2>Performance Metrics</h2>
+          <p>Enter tested maximums. Leave blank if not assessed — absent data will be noted in the report.</p>
+        </div>
+
+        <div class="metrics-block">
+          <h3 class="metrics-subtitle">Strength &mdash; 1RM Testing</h3>
+          <div class="fg-row">
+            <div class="fg-group">
+              <label for="squat1RM">Back Squat 1RM (kg)</label>
+              <input type="number" id="squat1RM" step="0.5" placeholder="e.g. 110" />
+              <span class="field-hint" id="squat-ratio"></span>
+            </div>
+            <div class="fg-group">
+              <label for="bench1RM">Bench Press 1RM (kg)</label>
+              <input type="number" id="bench1RM" step="0.5" placeholder="e.g. 85" />
+              <span class="field-hint" id="bench-ratio"></span>
+            </div>
+            <div class="fg-group">
+              <label for="deadlift1RM">Deadlift 1RM (kg)</label>
+              <input type="number" id="deadlift1RM" step="0.5" placeholder="e.g. 140" />
+              <span class="field-hint" id="dl-ratio"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="metrics-block">
+          <h3 class="metrics-subtitle">Conditioning</h3>
+          <div class="fg-row">
+            <div class="fg-group">
+              <label for="vo2max">VO2 Max (ml/kg/min)</label>
+              <input type="number" id="vo2max" step="0.1" placeholder="e.g. 44" />
+              <span class="field-hint" id="vo2-level"></span>
+            </div>
+            <div class="fg-group">
+              <label for="mileTime">1-Mile Run Time (M:SS)</label>
+              <input type="text" id="mileTime" placeholder="e.g. 8:30" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 3 — Movement Quality
+      ============================================================ -->
+      <section id="tab-movement" class="tab-panel">
+        <div class="panel-header">
+          <h2>Movement &amp; Physical Qualities</h2>
+          <p>Document observed or reported movement characteristics. Specific entries produce better report output than vague ones.</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="mobilityRestrictions">Mobility Restrictions</label>
+              <textarea id="mobilityRestrictions" rows="3" placeholder="e.g. Limited left hip internal rotation (~15&deg; vs 30&deg; R), reduced ankle dorsiflexion bilaterally (&lt;10&deg; weight-bearing), restricted thoracic rotation."></textarea>
+            </div>
+          </div>
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="stabilityDeficits">Stability Deficits</label>
+              <textarea id="stabilityDeficits" rows="3" placeholder="e.g. Poor single-leg stance on left (&lt;5 s vs 20 s R), lumbar flexion instability under load, shoulder blade winging on push-up."></textarea>
+            </div>
+          </div>
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="coordinationLiteracy">Coordination / Movement Literacy</label>
+              <textarea id="coordinationLiteracy" rows="3" placeholder="e.g. Difficulty dissociating hip hinge from lumbar flexion, limited kinesthetic awareness under fatigue, squat pattern shows knee valgus at 90&deg; with any load."></textarea>
+            </div>
+          </div>
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="painWithMovement">Pain with Movement</label>
+              <textarea id="painWithMovement" rows="2" placeholder="e.g. Anterior knee pain with loading in &gt;90&deg; flexion — NRS 4/10 at end range, 0 at rest. OR: None currently."></textarea>
+            </div>
+          </div>
+          <div class="fg-row">
+            <div class="fg-group fg-full">
+              <label for="balanceNotes">Balance / Proprioception Notes</label>
+              <textarea id="balanceNotes" rows="2" placeholder="e.g. Single-leg balance: R 18 s, L 6 s. Reduced proprioceptive confidence on left following ankle sprain. Postural sway noted under perturbation."></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 4 — Diagnostics
+      ============================================================ -->
+      <section id="tab-diagnostics" class="tab-panel">
+        <div class="panel-header">
+          <h2>Advanced Diagnostics</h2>
+          <p>All fields optional. The system will process available data and flag absent assessments where relevant to the pathway.</p>
+        </div>
+
+        <div class="diag-grid">
+
+          <!-- ForceDecks -->
+          <div class="diag-card">
+            <div class="diag-card-header">
+              <div class="diag-badge fd">FD</div>
+              <div>
+                <div class="diag-card-title">ForceDecks</div>
+                <div class="diag-card-sub">CMJ Force Plate Analysis</div>
               </div>
-            </form>
-
-            <h3>History</h3>
-            <div id="metric-history" class="history-table"></div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="cmjHeight">CMJ Height (cm)</label>
+                <input type="number" id="cmjHeight" step="0.1" placeholder="e.g. 38.2" />
+              </div>
+              <div class="fg-group">
+                <label for="peakPower">Peak Power (W)</label>
+                <input type="number" id="peakPower" placeholder="e.g. 4250" />
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="fdAsymmetry">Asymmetry %</label>
+                <input type="number" id="fdAsymmetry" step="0.1" placeholder="e.g. 8.4" />
+              </div>
+              <div class="fg-group">
+                <label for="brakingRFD">Braking RFD (N/s)</label>
+                <input type="number" id="brakingRFD" placeholder="e.g. 7200" />
+              </div>
+              <div class="fg-group">
+                <label for="brakingImpulse">Braking Impulse (N&middot;s)</label>
+                <input type="number" id="brakingImpulse" step="0.1" placeholder="e.g. 184" />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- DASHBOARD TAB -->
-    <section id="tab-dashboard" class="tab-panel">
-      <div class="card">
-        <div class="row between">
-          <h2>Performance Dashboard</h2>
-          <select id="dash-client" class="select"></select>
-        </div>
-        <div id="dash-content">
-          <p class="muted">Select a client to view trends.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- REPORTS TAB -->
-    <section id="tab-reports" class="tab-panel">
-      <div class="card">
-        <div class="row between">
-          <h2>Audit Report</h2>
-          <div class="row gap">
-            <select id="report-client" class="select"></select>
-            <button id="btn-generate" class="btn primary">Generate</button>
-            <button id="btn-pdf" class="btn">Export PDF</button>
+          <!-- NordBord -->
+          <div class="diag-card">
+            <div class="diag-card-header">
+              <div class="diag-badge nb">NB</div>
+              <div>
+                <div class="diag-card-title">NordBord</div>
+                <div class="diag-card-sub">Hamstring Strength Assessment</div>
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="nbLeft">Left Force (N)</label>
+                <input type="number" id="nbLeft" placeholder="e.g. 312" />
+              </div>
+              <div class="fg-group">
+                <label for="nbRight">Right Force (N)</label>
+                <input type="number" id="nbRight" placeholder="e.g. 348" />
+              </div>
+              <div class="fg-group">
+                <label for="nbImbalance">Imbalance %</label>
+                <input type="number" id="nbImbalance" step="0.1" placeholder="e.g. 10.3" />
+              </div>
+            </div>
           </div>
+
+          <!-- ForceFrame -->
+          <div class="diag-card">
+            <div class="diag-card-header">
+              <div class="diag-badge ff">FF</div>
+              <div>
+                <div class="diag-card-title">ForceFrame</div>
+                <div class="diag-card-sub">Isometric Strength Profile</div>
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="ffHipAdd">Hip Adduction (N)</label>
+                <input type="number" id="ffHipAdd" placeholder="e.g. 240" />
+              </div>
+              <div class="fg-group">
+                <label for="ffHipAbd">Hip Abduction (N)</label>
+                <input type="number" id="ffHipAbd" placeholder="e.g. 290" />
+              </div>
+              <div class="fg-group">
+                <label for="ffAsymmetry">Asymmetry %</label>
+                <input type="number" id="ffAsymmetry" step="0.1" placeholder="e.g. 12.0" />
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="ffShoulderIR">Shoulder IR (N)</label>
+                <input type="number" id="ffShoulderIR" placeholder="e.g. 185" />
+              </div>
+              <div class="fg-group">
+                <label for="ffShoulderER">Shoulder ER (N)</label>
+                <input type="number" id="ffShoulderER" placeholder="e.g. 120" />
+              </div>
+            </div>
+          </div>
+
+          <!-- SmartSpeed -->
+          <div class="diag-card">
+            <div class="diag-card-header">
+              <div class="diag-badge ss">SS</div>
+              <div>
+                <div class="diag-card-title">SmartSpeed</div>
+                <div class="diag-card-sub">Sprint &amp; COD Timing</div>
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="ss10m">10 m Sprint (s)</label>
+                <input type="number" id="ss10m" step="0.01" placeholder="e.g. 1.74" />
+              </div>
+              <div class="fg-group">
+                <label for="ss20m">20 m Sprint (s)</label>
+                <input type="number" id="ss20m" step="0.01" placeholder="e.g. 2.92" />
+              </div>
+              <div class="fg-group">
+                <label for="ssCOD">COD Time / Notes</label>
+                <input type="text" id="ssCOD" placeholder="e.g. 2.41 s 505 test" />
+              </div>
+            </div>
+          </div>
+
+          <!-- DynaMo -->
+          <div class="diag-card">
+            <div class="diag-card-header">
+              <div class="diag-badge dm">DM</div>
+              <div>
+                <div class="diag-card-title">DynaMo</div>
+                <div class="diag-card-sub">ROM &amp; Isolated Strength</div>
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group fg-full">
+                <label for="dynaROM">ROM Notes</label>
+                <textarea id="dynaROM" rows="2" placeholder="e.g. Hip flexion L 118&deg; R 122&deg;, ankle dorsiflexion L 28&deg; R 34&deg;&hellip;"></textarea>
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group fg-full">
+                <label for="dynaStrength">Isolated Strength Notes</label>
+                <textarea id="dynaStrength" rows="2" placeholder="e.g. Hip flexor: L 88 N R 94 N; knee ext: L 210 N R 198 N&hellip;"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- VBT / GymAware -->
+          <div class="diag-card">
+            <div class="diag-card-header">
+              <div class="diag-badge vb">VB</div>
+              <div>
+                <div class="diag-card-title">GymAware / VBT</div>
+                <div class="diag-card-sub">Velocity-Based Training Data</div>
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group">
+                <label for="vbtMeanVel">Mean Velocity (m/s)</label>
+                <input type="number" id="vbtMeanVel" step="0.01" placeholder="e.g. 0.84" />
+              </div>
+              <div class="fg-group">
+                <label for="vbtVelLoss">Velocity Loss % (intra-set)</label>
+                <input type="number" id="vbtVelLoss" step="0.1" placeholder="e.g. 18.5" />
+              </div>
+            </div>
+            <div class="fg-row compact">
+              <div class="fg-group fg-full">
+                <label for="vbtFVNotes">Force-Velocity Profile Notes</label>
+                <textarea id="vbtFVNotes" rows="2" placeholder="e.g. F-V profile shifted toward force — insufficient velocity expression at light loads. Speed-strength work recommended."></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /diag-grid -->
+      </section>
+
+      <!-- ============================================================
+           TAB 5 — Report
+      ============================================================ -->
+      <section id="tab-report" class="tab-panel">
+        <div class="report-toolbar">
+          <button id="btn-export-pdf" class="btn btn-primary">Export PDF</button>
         </div>
         <div id="report-output">
-          <p class="muted">Generate an audit to view strengths, weaknesses, and programming recommendations.</p>
+          <!-- Populated by Report.render() or App._showPlaceholder() -->
         </div>
+      </section>
+
+    </main><!-- /app-main -->
+  </div><!-- /app-shell -->
+
+  <!-- ================================================================
+       Load Client Modal
+  ================================================================ -->
+  <div id="load-modal" class="modal" role="dialog" aria-modal="true" aria-label="Load client">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Load Client</h3>
+        <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
       </div>
-    </section>
-  </main>
+      <div id="client-list-modal" class="modal-client-list">
+        <!-- Populated by App.openLoadModal() -->
+      </div>
+    </div>
+  </div>
 
-  <footer class="app-footer container">
-    <p>Data is stored locally in your browser. Nothing leaves this device.</p>
-  </footer>
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="app.js"></script>
+  <!-- ================================================================
+       Scripts — order matters: dependencies before consumers
+  ================================================================ -->
+  <script src="modules/storage.js"></script>
+  <script src="modules/client.js"></script>
+  <script src="modules/classification.js"></script>
+  <script src="modules/diagnostics.js"></script>
+  <script src="modules/planning.js"></script>
+  <script src="modules/report.js"></script>
+  <script src="app.js"></script>
+
 </body>
 </html>

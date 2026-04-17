@@ -1,52 +1,69 @@
-/**
- * storage.js
- * -----------
- * Thin wrapper around localStorage for persisting the client roster.
- * Keeps all persistence concerns in one place so we can later swap the
- * implementation for a real backend (IndexedDB, REST API, Firestore, ...)
- * without touching the rest of the app.
- */
+const Storage = {
+  PREFIX: 'pis_',
 
-const KEY = 'cc_clients_v1';
-
-export const storage = {
-  /** Returns all clients as an array (never null). */
-  all() {
+  save(key, data) {
     try {
-      const raw = localStorage.getItem(KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (err) {
-      console.error('[storage] failed to parse clients', err);
-      return [];
+      localStorage.setItem(this.PREFIX + key, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      console.error('Storage.save failed:', e);
+      return false;
     }
   },
 
-  /** Persists the full client list. */
-  saveAll(clients) {
-    localStorage.setItem(KEY, JSON.stringify(clients));
+  load(key) {
+    try {
+      const raw = localStorage.getItem(this.PREFIX + key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.error('Storage.load failed:', e);
+      return null;
+    }
   },
 
-  /** Finds a client by id, or undefined. */
-  get(id) {
-    return this.all().find((c) => c.id === id);
+  remove(key) {
+    localStorage.removeItem(this.PREFIX + key);
   },
 
-  /** Inserts or updates a client in place. */
-  upsert(client) {
-    const all = this.all();
-    const idx = all.findIndex((c) => c.id === client.id);
-    if (idx >= 0) all[idx] = client;
-    else all.push(client);
-    this.saveAll(all);
+  saveClient(client) {
+    const id = client.id || this.generateId();
+    client.id = id;
+    client.updatedAt = new Date().toISOString();
+    if (!client.createdAt) client.createdAt = client.updatedAt;
+
+    const clients = this.listClients();
+    const idx     = clients.findIndex(c => c.id === id);
+    const summary = { id, name: client.profile.fullName || 'Unnamed', updatedAt: client.updatedAt };
+
+    if (idx >= 0) clients[idx] = summary;
+    else          clients.push(summary);
+
+    this.save('clients', clients);
+    this.save('client_' + id, client);
+    return id;
   },
 
-  /** Removes a client by id. */
-  remove(id) {
-    this.saveAll(this.all().filter((c) => c.id !== id));
+  loadClient(id) {
+    return this.load('client_' + id);
   },
 
-  /** Wipes the entire roster. */
-  clear() {
-    localStorage.removeItem(KEY);
+  listClients() {
+    return this.load('clients') || [];
   },
+
+  deleteClient(id) {
+    const clients = this.listClients().filter(c => c.id !== id);
+    this.save('clients', clients);
+    this.remove('client_' + id);
+  },
+
+  generateId() {
+    return 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  },
+
+  clearAll() {
+    Object.keys(localStorage)
+      .filter(k => k.startsWith(this.PREFIX))
+      .forEach(k => localStorage.removeItem(k));
+  }
 };
