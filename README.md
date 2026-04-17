@@ -1,107 +1,117 @@
-# AI Fitness Coaching Platform
+# Performance Intelligence System
 
-A lightweight, zero-dependency MVP that helps a fitness coach manage clients,
-track performance, and generate structured audit reports — all running
-entirely in the browser.
+A modular, browser-based assessment, classification, and coaching decision engine for fitness professionals. No frameworks, no build step, no server required.
 
-## Features
+## What it does
 
-1. **Client Management** — Create, edit, and delete client profiles
-   (demographics, goals, injuries, baseline metrics). Data is persisted to
-   `localStorage`, so nothing leaves the device.
-2. **Performance Dashboard** — Track strength, conditioning, and body
-   composition metrics over time. Displays KPI cards with trend deltas and
-   inline SVG line charts (no Chart.js).
-3. **Audit Report Generator** — Produces a rule-based audit that classifies
-   every tracked dimension against published reference standards and the
-   client's own trend data, then derives goal- and injury-aware
-   recommendations. Deterministic — every line comes from an explicit rule.
-4. **PDF Export** — Exports the audit via the browser's native print flow
-   with a dedicated print stylesheet.
+Given a client's profile, testing data, movement constraints, and diagnostics, the system:
+
+1. **Classifies** them into the correct training / rehab pathway
+2. **Identifies** primary limiters ranked by priority
+3. **Summarises** diagnostic device data (ForceDecks, NordBord, ForceFrame, SmartSpeed, DynaMo, VBT)
+4. **Produces** ranked programming priorities specific to the pathway
+5. **Generates** a structured 2-phase training / rehab plan
+6. **Defines** measurable targets and KPIs
+7. **Exports** a professional PDF report via the browser print flow
+
+## Supported pathways
+
+**General Population**
+- Return to ADLs
+- Return to Work / Occupation
+- Return to Light Recreational Activity
+- Return to Fitness
+
+**Athlete / Sport**
+- Return to Participation
+- Return to Sport
+- Return to Performance
+
+**Shared Rehab / Performance Phases**
+- Initial / Clinical Rehab
+- Functional Reconditioning
+- Strength / Capacity Development
+- Performance Reintegration
 
 ## Run locally
 
-No build step. No dependencies. Pick either option:
+No build step. No dependencies. No installation required.
 
 ```bash
-# Option A — Python
+# Option A — Python (built into macOS and most Linux)
 python3 -m http.server 8080
 
 # Option B — Node
 npx serve .
+
+# Option C — VS Code Live Server extension
+# Right-click index.html → "Open with Live Server"
 ```
 
-Then open <http://localhost:8080>. Opening `index.html` directly via `file://`
-will fail because the app uses native ES modules (which require `http://`).
+Then open **http://localhost:8080** in your browser.
 
-Click **Load Sample** in the header to drop in a demo client with four
-months of performance data and try every feature immediately.
+> Do not open `index.html` directly via `file://` — browsers block script loading from the filesystem for security reasons.
+
+## How to use
+
+1. **Client Profile tab** — Enter name, age, weight, client type, goals, and injury history. Client type drives pathway classification.
+2. **Performance Metrics tab** — Enter 1RM values and conditioning data. Relative strength ratios update live as you type.
+3. **Movement Quality tab** — Document mobility restrictions, stability deficits, coordination, pain, and balance findings. Be specific — vague entries reduce report quality.
+4. **Diagnostics tab** — Enter data from ForceDecks, NordBord, ForceFrame, SmartSpeed, DynaMo, or VBT where available. All fields are optional.
+5. Click **Generate Report** — the system classifies the client, processes diagnostics, builds a 2-phase plan, and renders the full report.
+6. Click **Save** to persist the client to localStorage.
+7. Click **Export PDF** on the Report tab → browser print dialog → Save as PDF.
 
 ## File structure
 
 ```
-├── index.html          # Layout: tabs, forms, cards
-├── styles.css          # Minimal professional styling + print stylesheet
-├── app.js              # UI controller (tabs, forms, dashboard, PDF)
+├── index.html                 # Full UI: tabs, forms, diagnostics cards
+├── styles.css                 # Professional styling + print stylesheet
+├── app.js                     # App controller — tabs, save/load, report orchestration
 └── modules/
-    ├── storage.js      # localStorage wrapper (all persistence in one place)
-    ├── client.js       # Pure functions for creating/mutating clients
-    └── report.js       # Deterministic rule-based audit generator
+    ├── storage.js             # localStorage CRUD wrapper
+    ├── client.js              # Client data model + form serialisation
+    ├── classification.js      # Pathway classification and limiter identification engine
+    ├── diagnostics.js         # Device data processing — flags asymmetries and weak links
+    ├── planning.js            # 2-phase plan generator
+    └── report.js              # Report builder and HTML renderer
 ```
 
-### How each part works
+## Architecture
 
-- **`storage.js`** — Wraps `localStorage` behind an `all / get / upsert /
-  remove / clear` API. Swap this file for a REST client or IndexedDB
-  implementation and the rest of the app keeps working unchanged.
-- **`client.js`** — Pure functions (`newClient`, `updateClient`,
-  `addMetric`, `removeMetric`). No DOM, no storage — trivially unit-testable
-  and reusable on a backend.
-- **`report.js`** — `generateAudit(client)` returns a structured object with
-  `strengths`, `weaknesses`, and `recommendations`. Classification uses
-  bodyweight strength ratios, VO₂ max bands, BMI categories, body fat trend,
-  resting HR, plus a keyword rule engine that aligns recommendations to the
-  client's stated goals. `renderAuditHTML(audit)` turns the object into
-  HTML shared by the on-screen view and the PDF export.
-- **`app.js`** — The UI controller. Handles tab switching, form wiring,
-  dashboard rendering (inline SVG line charts, zero dependencies), and the
-  generate-then-print flow for the PDF.
-- **`styles.css`** — Minimal palette with one teal accent, CSS grid layout,
-  plus a `@media print` block that hides every non-report element so
-  `window.print()` yields a clean, paginated PDF.
+All modules are plain JavaScript objects loaded via `<script>` tags — no ES modules, no bundler, no build step. `app.js` is the orchestrator that calls each module in sequence:
 
-## Export a PDF
+```
+Client.fromForm()
+  → Classification.classify(client)
+  → Diagnostics.process(client)
+  → Planning.generate(client, classification)
+  → Report.generate(...) → Report.render(...)
+```
 
-1. Open the **Reports** tab.
-2. Pick a client and click **Generate**.
-3. Click **Export PDF** → the browser print dialog appears.
-4. Choose **Save as PDF** as the destination.
+All data is stored in `localStorage` under a `pis_` key prefix. To swap the storage backend (IndexedDB, REST API, Supabase), replace `modules/storage.js` — nothing else changes.
 
-The print stylesheet strips the app chrome and formats the audit for A4.
+## Classification logic
 
-## Next steps for scaling
+Pathway assignment is based on:
+- **Client type** — general population, youth, rehab, occupational, or athlete sub-type
+- **Goals** — keyword matching against goal text
+- **Pain status** — any active pain routes to Initial / Clinical Rehab phase
+- **Relative strength** — squat, bench, and deadlift as multiples of bodyweight
+- **Conditioning** — VO2 max or mile time bands
+- **Movement quality** — documented restrictions and deficits
+- **Diagnostic data** — asymmetry flags from ForceDecks, NordBord, ForceFrame
 
-- **Backend & database** — Replace `storage.js` with a REST client that
-  talks to a Node/Express + Postgres (or Supabase / Firestore) backend. The
-  rest of the app already calls through that single interface, so nothing
-  else changes.
-- **Authentication** — Add a coach login (email + magic link or OAuth).
-  Scope every query by `coachId` so a coach only sees their own clients.
-- **Multi-coach & clients as users** — Let clients log in and see their own
-  dashboards. Add a role column and row-level security.
-- **Richer analytics** — Swap the inline SVG charts for a charting library
-  (Chart.js, uPlot) once requirements grow; add percentile comparisons
-  against population norms.
-- **AI-assisted audits** — Keep the rule engine as a deterministic
-  baseline, then layer an LLM call that takes the structured audit as
-  context and generates plain-language coaching notes. Always ground the
-  LLM output in the deterministic findings to avoid hallucinations.
-- **Native PDF generation** — Move to a server-side renderer (e.g.
-  Puppeteer or a library like `pdfkit`) so reports can be emailed or
-  archived without the user clicking Print.
-- **Testing** — The pure modules (`client.js`, `report.js`) are trivial to
-  unit-test with Vitest/Jest; add snapshot tests on `generateAudit` to lock
-  down the rule engine.
+## PDF export
+
+1. Generate a report on the Report tab
+2. Click **Export PDF**
+3. In the browser print dialog, set destination to **Save as PDF**
+4. The print stylesheet hides all app chrome and formats the report for A4
+
+## Data privacy
+
+All data is stored locally in your browser's `localStorage`. Nothing is transmitted to any server. Clearing site data in browser settings will remove all saved clients.
 
 ## License
 

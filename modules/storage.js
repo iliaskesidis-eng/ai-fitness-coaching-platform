@@ -1,52 +1,59 @@
 /**
  * storage.js
- * -----------
- * Thin wrapper around localStorage for persisting the client roster.
- * Keeps all persistence concerns in one place so we can later swap the
- * implementation for a real backend (IndexedDB, REST API, Firestore, ...)
- * without touching the rest of the app.
+ * Thin localStorage wrapper. All persistence goes through here so the
+ * backend can be swapped without touching anything else.
  */
 
-const KEY = 'cc_clients_v1';
+const Storage = {
+  PREFIX: 'pis_',
 
-export const storage = {
-  /** Returns all clients as an array (never null). */
-  all() {
+  // Save any value under a namespaced key
+  save(key, data) {
     try {
-      const raw = localStorage.getItem(KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (err) {
-      console.error('[storage] failed to parse clients', err);
-      return [];
+      localStorage.setItem(this.PREFIX + key, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      console.error('Storage.save failed:', e);
+      return false;
     }
   },
 
-  /** Persists the full client list. */
-  saveAll(clients) {
-    localStorage.setItem(KEY, JSON.stringify(clients));
+  // Load a value (returns null if absent or parse fails)
+  load(key) {
+    try {
+      const raw = localStorage.getItem(this.PREFIX + key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
   },
 
-  /** Finds a client by id, or undefined. */
-  get(id) {
-    return this.all().find((c) => c.id === id);
+  remove(key) {
+    localStorage.removeItem(this.PREFIX + key);
   },
 
-  /** Inserts or updates a client in place. */
-  upsert(client) {
-    const all = this.all();
-    const idx = all.findIndex((c) => c.id === client.id);
-    if (idx >= 0) all[idx] = client;
-    else all.push(client);
-    this.saveAll(all);
+  // --- Client-specific helpers ---
+
+  saveClient(client) {
+    // TODO: assign id, update timestamps, maintain index
+    return client.id;
   },
 
-  /** Removes a client by id. */
-  remove(id) {
-    this.saveAll(this.all().filter((c) => c.id !== id));
+  loadClient(id) {
+    // TODO: load from pis_client_<id>
+    return null;
   },
 
-  /** Wipes the entire roster. */
-  clear() {
-    localStorage.removeItem(KEY);
+  listClients() {
+    // TODO: load client index array
+    return [];
   },
+
+  deleteClient(id) {
+    // TODO: remove from index and delete record
+  },
+
+  clearAll() {
+    // TODO: remove all pis_ keys
+  }
 };

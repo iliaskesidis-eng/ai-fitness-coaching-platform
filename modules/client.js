@@ -1,113 +1,69 @@
 /**
  * client.js
- * ---------
- * Pure functions for creating and mutating client records.
- * No DOM and no storage calls here — this module is easy to unit test
- * and easy to reuse on a future backend.
- *
- * Client shape:
- * {
- *   id, name, age, gender,
- *   baseline: { heightCm, weightKg, bodyFatPct, restingHR },
- *   goals, injuries,
- *   metrics: [
- *     {
- *       date: 'YYYY-MM-DD',
- *       strength: { squat, bench, deadlift },
- *       conditioning: { vo2max, mileTime },
- *       body: { weightKg, bodyFatPct }
- *     }
- *   ],
- *   createdAt, updatedAt
- * }
+ * Client data model. Defines the shape of a client record and provides
+ * helpers to read from / write to the HTML form.
  */
 
-/** Converts a form value to a number or null (empty -> null). */
-const num = (v) => {
-  if (v === '' || v === null || v === undefined) return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
+const Client = {
+
+  // Returns a blank client object with all fields at default values
+  createEmpty() {
+    return {
+      id: null,
+      createdAt: null,
+      updatedAt: null,
+
+      profile: {
+        fullName: '', age: '', sex: '', height: '', weight: '',
+        bodyFat: '', restingHR: '', trainingAge: '',
+        clientType: '', occupation: '', goals: '', injuryHistory: ''
+      },
+
+      metrics: {
+        squat1RM: '', bench1RM: '', deadlift1RM: '',
+        vo2max: '', mileTime: ''
+      },
+
+      movement: {
+        mobilityRestrictions: '', stabilityDeficits: '',
+        coordinationLiteracy: '', painWithMovement: '', balanceNotes: ''
+      },
+
+      diagnostics: {
+        forceDecks: {
+          cmjHeight: '', peakPower: '', asymmetry: '',
+          brakingRFD: '', brakingImpulse: ''
+        },
+        nordBord: { leftForce: '', rightForce: '', imbalance: '' },
+        forceFrame: {
+          hipAdduction: '', hipAbduction: '',
+          shoulderIR: '', shoulderER: '', asymmetry: ''
+        },
+        smartSpeed: { tenMeter: '', twentyMeter: '', cod: '' },
+        dynaMo:     { romNotes: '', strengthNotes: '' },
+        vbt:        { meanVelocity: '', velocityLoss: '', fvNotes: '' }
+      }
+    };
+  },
+
+  // Read all form fields into a client object
+  fromForm() {
+    // TODO: read each input by id and populate the client shape above
+    const client = this.createEmpty();
+    return client;
+  },
+
+  // Populate form fields from a stored client object
+  toForm(client) {
+    // TODO: set each input value from client fields
+  },
+
+  // Return an array of error strings; empty means valid
+  validate(client) {
+    const errors = [];
+    if (!client.profile.fullName)   errors.push('Full name is required');
+    if (!client.profile.clientType) errors.push('Client type is required');
+    if (!client.profile.goals)      errors.push('Goals field is required');
+    return errors;
+  }
 };
-
-/** Simple unique id suitable for local-only persistence. */
-const uid = () =>
-  'c_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-
-/** Builds a brand-new client from raw form data. */
-export function newClient(data) {
-  const now = new Date().toISOString();
-  return {
-    id: uid(),
-    name: (data.name || '').trim(),
-    age: num(data.age) || 0,
-    gender: data.gender || 'Other',
-    baseline: {
-      heightCm: num(data.heightCm),
-      weightKg: num(data.weightKg),
-      bodyFatPct: num(data.bodyFatPct),
-      restingHR: num(data.restingHR),
-    },
-    goals: (data.goals || '').trim(),
-    injuries: (data.injuries || '').trim(),
-    metrics: [],
-    createdAt: now,
-    updatedAt: now,
-  };
-}
-
-/** Returns a new client object with profile fields updated. */
-export function updateClient(client, data) {
-  return {
-    ...client,
-    name: (data.name ?? client.name).trim(),
-    age: num(data.age) ?? client.age,
-    gender: data.gender ?? client.gender,
-    baseline: {
-      heightCm: num(data.heightCm) ?? client.baseline.heightCm,
-      weightKg: num(data.weightKg) ?? client.baseline.weightKg,
-      bodyFatPct: num(data.bodyFatPct) ?? client.baseline.bodyFatPct,
-      restingHR: num(data.restingHR) ?? client.baseline.restingHR,
-    },
-    goals: (data.goals ?? client.goals).trim(),
-    injuries: (data.injuries ?? client.injuries).trim(),
-    updatedAt: new Date().toISOString(),
-  };
-}
-
-/** Returns a new client object with a metric entry appended, sorted by date. */
-export function addMetric(client, entry) {
-  const metric = {
-    date: entry.date,
-    strength: {
-      squat: num(entry.squat),
-      bench: num(entry.bench),
-      deadlift: num(entry.deadlift),
-    },
-    conditioning: {
-      vo2max: num(entry.vo2max),
-      mileTime: num(entry.mileTime),
-    },
-    body: {
-      weightKg: num(entry.mWeight),
-      bodyFatPct: num(entry.mBf),
-    },
-  };
-  const metrics = [...client.metrics, metric].sort((a, b) =>
-    a.date.localeCompare(b.date)
-  );
-  return { ...client, metrics, updatedAt: new Date().toISOString() };
-}
-
-/** Returns a new client object with a metric entry removed by date. */
-export function removeMetric(client, date) {
-  return {
-    ...client,
-    metrics: client.metrics.filter((m) => m.date !== date),
-    updatedAt: new Date().toISOString(),
-  };
-}
-
-/** Convenience getters used by dashboard / report modules. */
-export const latestMetric = (c) =>
-  c.metrics.length ? c.metrics[c.metrics.length - 1] : null;
-export const firstMetric = (c) => (c.metrics.length ? c.metrics[0] : null);
